@@ -1,0 +1,32 @@
+{
+  "name": "@workspace/api",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "bun --watch src/index.ts",
+    "start": "bun src/index.ts",
+    "build": "tsc --noEmit",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@better-auth/drizzle-adapter": "^1.6.1",
+    "@hono/node-server": "^1.19.14",
+    "@workspace/db": "workspace:*",
+    "@workspace/shared": "workspace:*",
+    "better-auth": "^1.6.1",
+    "dotenv": "^17.4.2",
+    "drizzle-orm": "^0.45.1",
+    "hono": "^4.12.23",
+    "ioredis": "^5.8.2",
+    "socket.io": "^4.8.1",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@workspace/eslint-config": "workspace:*",
+    "@workspace/typescript-config": "workspace:*",
+    "eslint": "^9",
+    "typescript": "^5"
+  }
+}
