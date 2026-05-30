@@ -1,10 +1,33 @@
 import { NextResponse, type NextRequest } from "next/server"
+import { jwtVerify } from "jose"
 
 const protectedPrefixes = ["/dashboard", "/game", "/lobby"]
 
 export async function proxy(request: NextRequest) {
+  const url = request.nextUrl.clone()
+
+  // Handle Admin Auth
+  if (url.pathname.startsWith("/admin") && !url.pathname.startsWith("/admin/login")) {
+    const adminToken = request.cookies.get("admin_token")?.value
+
+    if (!adminToken) {
+      url.pathname = "/admin/login"
+      return NextResponse.redirect(url)
+    }
+
+    try {
+      const secret = new TextEncoder().encode(process.env.ADMIN_JWT_SECRET)
+      await jwtVerify(adminToken, secret)
+      return NextResponse.next()
+    } catch (err) {
+      url.pathname = "/admin/login"
+      return NextResponse.redirect(url)
+    }
+  }
+
+  // Handle Game/Lobby/Dashboard Auth
   const isProtectedPath = protectedPrefixes.some((prefix) =>
-    request.nextUrl.pathname.startsWith(prefix)
+    url.pathname.startsWith(prefix)
   )
 
   if (!isProtectedPath) {
@@ -12,7 +35,6 @@ export async function proxy(request: NextRequest) {
   }
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000"
-  const url = request.nextUrl.clone()
 
   let sessionResponse: Response
 
@@ -43,5 +65,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/rooms/:path*", "/game/:path*"],
+  matcher: ["/dashboard/:path*", "/rooms/:path*", "/game/:path*", "/lobby/:path*", "/admin/:path*"],
 }

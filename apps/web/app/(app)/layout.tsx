@@ -2,6 +2,8 @@ import Link from "next/link"
 
 import { buttonVariants } from "@workspace/ui/components/button"
 
+import { LogoutButton } from "@/components/logout-button"
+
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <main className="min-h-svh bg-background text-foreground">
@@ -20,6 +22,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             <Link className={buttonVariants({ size: "sm", variant: "ghost" })} href="/game/map">
               Map
             </Link>
+            <LogoutButton />
           </nav>
         </header>
         <div className="flex-1 py-8">{children}</div>
