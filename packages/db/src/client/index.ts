@@ -1,12 +1,22 @@
 import { neon } from "@neondatabase/serverless"
-import { drizzle } from "drizzle-orm/neon-http"
+import { drizzle as drizzleNeon } from "drizzle-orm/neon-http"
+import { drizzle as drizzleNode } from "drizzle-orm/node-postgres"
+import pg from "pg"
 
 import * as schema from "../schema"
 
-export function createDb(databaseUrl: string) {
-  const sql = neon(databaseUrl)
+function isNeonUrl(url: string): boolean {
+  return url.includes("neon.tech") || url.includes("neon.com")
+}
 
-  return drizzle(sql, { schema })
+export function createDb(databaseUrl: string) {
+  if (isNeonUrl(databaseUrl)) {
+    const sql = neon(databaseUrl)
+    return drizzleNeon(sql, { schema })
+  }
+
+  const pool = new pg.Pool({ connectionString: databaseUrl })
+  return drizzleNode(pool, { schema })
 }
 
 export type DbClient = ReturnType<typeof createDb>

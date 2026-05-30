@@ -21,9 +21,9 @@ app.use(
     credentials: true,
   })
 )
-app.use("*", sessionMiddleware)
-
 app.on(["GET", "POST"], "/api/auth/*", (c) => auth.handler(c.req.raw))
+
+app.use("/api/*", sessionMiddleware)
 app.route("/api", routes)
 
 export type AppType = typeof app
